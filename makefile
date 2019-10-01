@@ -26,3 +26,6 @@ all:
 
 misra:
 	$(TOOL) $(MISRAFLAGS) $(DIR)
+
+clean:
+	$(RM) $(EXE1) $(EXE2)
