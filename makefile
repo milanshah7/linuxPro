@@ -5,7 +5,7 @@ TOOL := cppcheck
 MISRAFLAGS := --enable=all
 #MISRAFLAGS += --check-config
 
-DIR := ../training_program/
+DIR := ./
 
 LIBS := -lpthread
 
