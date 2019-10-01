@@ -10,15 +10,13 @@ static void *udp_thread(void *);
 uint32_t tcpConnectServer(){
 
 	uint32_t sockfd;
-	int32_t ret = SUCCESS;
 
 	struct sockaddr_in servaddr, cliaddr;
 	socklen_t socklen = sizeof(struct sockaddr_in);
 
 
-	ret = sockfd = socket(AF_INET, SOCK_STREAM, 0);           // for TCP Socket
-	if(ret == FAILURE)
-		DEBUG_ERROR("socket");
+	if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+		DEBUG_ERROR("socket", __func__);
 
 	bzero(&servaddr, socklen);
 	bzero(&cliaddr , socklen);
@@ -27,67 +25,60 @@ uint32_t tcpConnectServer(){
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);       // refers to local host 127.0.0.1
 	servaddr.sin_port = htons(PORT1);
 
-	ret = bind(sockfd, (struct sockaddr *)&servaddr, socklen);
-	if(ret == FAILURE)
-		perror("bind");
+	if(bind(sockfd, (struct sockaddr *)&servaddr, socklen) == FAILURE)
+		DEBUG_ERROR("bind", __func__);
 
-	ret = listen(sockfd, 5);
-	if(ret == FAILURE)
-		perror("listen");
+	if(listen(sockfd, 5) == FAILURE)
+		DEBUG_ERROR("listen", __func__);
 
-	ret = sockfd = accept(sockfd, (struct sockaddr *)&cliaddr, &socklen);
-	if(ret == FAILURE)
-		perror("accept");
+	if((sockfd = accept(sockfd, (struct sockaddr *)&cliaddr, &socklen)) == FAILURE)
+		DEBUG_ERROR("accept", __func__);
 
-	printf("File Descriptor: %d...\n", ret);
+	printf("File Descriptor: %d...\n", sockfd);
 	printf("Got Connection from %s....\n", inet_ntoa(cliaddr.sin_addr));
 
-	return ret;
+	return sockfd;
 }
 
 uint32_t tcpConnectClient(){
 
 	uint32_t sockfd;
-	int32_t ret = SUCCESS;
 
 	struct sockaddr_in servaddr;
 	socklen_t addrlen = sizeof(servaddr);
 
-	ret = sockfd = socket(AF_INET,SOCK_STREAM, 0);          // for tcp socket
-	if(ret == FAILURE)
-		DEBUG_ERROR("socket")
+	if((sockfd = socket(AF_INET,SOCK_STREAM, 0)) == FAILURE)
+		DEBUG_ERROR("socket", __func__)
 
-			bzero(&servaddr, sizeof(servaddr));
+	bzero(&servaddr, sizeof(servaddr));
 
 	servaddr.sin_family = AF_INET;                      // for IPv4
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);       // refers to local host 0.0.0.0
 	servaddr.sin_port = htons(PORT1);
 
-	ret = connect(sockfd, (struct sockaddr *)&servaddr, addrlen);
-	if(ret = FAILURE)
-		DEBUG_ERROR("connect");
+
+	if(connect(sockfd, (struct sockaddr *)&servaddr, addrlen) == FAILURE)
+		DEBUG_ERROR("connect", __func__);
 
 	return sockfd;
 }
 
 uint32_t udpConnectServer(){
-	uint32_t sockfd, ret = 0;
+	uint32_t sockfd;
 	struct sockaddr_in servaddr;
 	socklen_t addrlen = sizeof(struct sockaddr_in);
 
 	bzero(&servaddr, addrlen);
 
-	sockfd = socket(AF_INET, SOCK_DGRAM, 0);           // for UDP SOcket
-	if (sockfd == FAILURE)
-		perror("socket");
+	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == FAILURE)
+		DEBUG_ERROR("socket", __func__);
 
 	servaddr.sin_family      = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 	servaddr.sin_port        = htons(PORT2);
 
-	ret = bind(sockfd, (const struct sockaddr *)&servaddr, addrlen);
-	if(ret == FAILURE)
-		perror("bind");
+	if(bind(sockfd, (const struct sockaddr *)&servaddr, addrlen) == FAILURE)
+		DEBUG_ERROR("bind", __func__);
 
 	return sockfd;
 }
@@ -99,9 +90,8 @@ uint32_t udpConnectClient(struct sockaddr_in *udpPtr){
 
 	bzero(&servaddr, addrlen);
 
-	sockfd = socket(AF_INET, SOCK_DGRAM, 0);           // for UDP Socket
-	if(sockfd == FAILURE)
-		perror("socket");
+	if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == FAILURE)
+		DEBUG_ERROR("socket", __func__);
 
 	servaddr.sin_family      = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
@@ -118,28 +108,30 @@ uint32_t tcp_udp_connect(struct commandframe *tcpUdpPtr){
 
 	ret = pthread_create(&p_tcp, NULL, tcp_thread, NULL);
 	if (ret == FAILURE)
-		perror("pthread_create_tcpConnect");
+		DEBUG_ERROR("pthread_create_tcpConnect", __func__);
 
 	ret = pthread_create(&p_udp, NULL, udp_thread, NULL);
-	if (ret = FAILURE)
-		perror("pthread_create_udpConnect");
+	if (ret == FAILURE)
+		DEBUG_ERROR("pthread_create_udpConnect", __func__);
 
 	ret = pthread_join(p_tcp, NULL);
-	if (ret = FAILURE)
-		perror("pthread_join_tcpConnect");
+	if (ret == FAILURE)
+		DEBUG_ERROR("pthread_join_tcpConnect", __func__);
 
 	ret = pthread_join(p_udp, NULL);
-	if (ret = FAILURE)
-		perror("pthread_join_udpConnect");
+	if (ret == FAILURE)
+		DEBUG_ERROR("pthread_join_udpConnect", __func__);
 
 	return ret;
 
 }
 
 static void *tcp_thread(void *targ){
-	(void)tcpConnectServer();
+	tcpConnectServer();
+	return NULL;
 }
 
 static void *udp_thread(void *uarg){
-	(void)udpConnectServer();
+	udpConnectServer();
+	return NULL;
 }
