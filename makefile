@@ -13,7 +13,7 @@ SRC1 := server.c
 SRC2 += client.c
 
 DEP := sock.c
-DEP += linkedList.c
+#DEP += linkedList.c
 
 EXE1 := server
 EXE2 := client
