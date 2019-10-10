@@ -9,7 +9,7 @@
 
 int main(){
 	pid_t pid;
-	uint32_t serv_sock_fd, ret;
+	int32_t serv_sock_fd, ret;
 	struct commandframe serv_cFrame;
 	struct responseframe serv_rFrame;
 	struct sockaddr_in cliaddr;
@@ -48,7 +48,7 @@ int main(){
 	}
 	else{
 
-		printf("Parent Process has started (UDP Process) with pid: %d", getpid());
+		printf("\nParent Process has started (UDP Process) with pid: %d\n", getpid());
 
 		serv_sock_fd = udpConnectServer();
 

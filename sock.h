@@ -30,8 +30,8 @@
  *
  */
 
-uint32_t tcpConnectServer(void);
-uint32_t tcpConnectClient(void);
+int32_t tcpConnectServer(void);
+int32_t tcpConnectClient(void);
 
 /*
  *
@@ -43,8 +43,8 @@ uint32_t tcpConnectClient(void);
  *
  */
 
-uint32_t udpConnectServer(void);
-uint32_t udpConnectClient(struct sockaddr_in *);
+int32_t udpConnectServer(void);
+int32_t udpConnectClient(void);
 
 /*
  *
