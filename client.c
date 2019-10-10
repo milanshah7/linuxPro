@@ -15,7 +15,7 @@
 
 static void initializeFrameAndPayload(struct commandframe *);
 static void initializePayload(struct commandframe *);
-static int processCommand(struct commandframe *);
+static int32_t processCommand(struct commandframe *);
 
 int main(){
 
@@ -30,14 +30,13 @@ int main(){
 	return 0;
 }
 
-int processCommand(struct commandframe *commandPtr){
+int32_t processCommand(struct commandframe *commandPtr){
 
-	int socketfd, ret;
-	struct sockaddr_in servaddr, cliaddr;
+	int32_t socketfd, ret;
+	struct sockaddr_in cliaddr;
 	struct responseframe rFrame;
 	socklen_t addrlen = sizeof(struct sockaddr_in);
 
-	bzero(&servaddr, addrlen);
 	bzero(&cliaddr , addrlen);
 	bzero(&rFrame, SIZE_OF_RESPONSE);
 
@@ -63,15 +62,15 @@ int processCommand(struct commandframe *commandPtr){
 	}
 	else if ((commandPtr->inSockType == UDP_SOCK) && (commandPtr->outSockType == UDP_SOCK)){
 
-		socketfd = udpConnectClient(&servaddr);
+		socketfd = udpConnectClient();
 
-		ret = sendto(socketfd, commandPtr, SIZE_OF_COMMAND, 0, (const struct sockaddr *)&servaddr , addrlen);
+		ret = send(socketfd, commandPtr, SIZE_OF_COMMAND, 0); 
 		if (ret == FAILURE)
-			DEATH("sendto");
+			DEATH("send");
 
-		ret = recvfrom(socketfd, &rFrame, SIZE_OF_RESPONSE, 0, (struct sockaddr *)&cliaddr, &addrlen);
+		ret = recv(socketfd, &rFrame, SIZE_OF_RESPONSE, 0);
 		if (ret == FAILURE)
-			DEATH("readfrom");
+			DEATH("recv");
 
 	}
 	else{

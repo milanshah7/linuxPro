@@ -7,9 +7,9 @@
 static void *tcp_thread(void *);
 static void *udp_thread(void *);
 
-uint32_t tcpConnectServer(){
+int32_t tcpConnectServer(){
 
-	uint32_t sockfd;
+	int32_t sockfd;
 
 	struct sockaddr_in servaddr, cliaddr;
 	socklen_t socklen = sizeof(struct sockaddr_in);
@@ -34,15 +34,12 @@ uint32_t tcpConnectServer(){
 	if((sockfd = accept(sockfd, (struct sockaddr *)&cliaddr, &socklen)) == FAILURE)
 		DEBUG_ERROR("accept", __func__);
 
-	printf("File Descriptor: %d...\n", sockfd);
-	printf("Got Connection from %s....\n", inet_ntoa(cliaddr.sin_addr));
-
 	return sockfd;
 }
 
-uint32_t tcpConnectClient(){
+int32_t tcpConnectClient(){
 
-	uint32_t sockfd;
+	int32_t sockfd;
 
 	struct sockaddr_in servaddr;
 	socklen_t addrlen = sizeof(servaddr);
@@ -63,8 +60,8 @@ uint32_t tcpConnectClient(){
 	return sockfd;
 }
 
-uint32_t udpConnectServer(){
-	uint32_t sockfd;
+int32_t udpConnectServer(){
+	int32_t sockfd;
 	struct sockaddr_in servaddr;
 	socklen_t addrlen = sizeof(struct sockaddr_in);
 
@@ -83,8 +80,8 @@ uint32_t udpConnectServer(){
 	return sockfd;
 }
 
-uint32_t udpConnectClient(struct sockaddr_in *udpPtr){
-	uint32_t sockfd;
+int32_t udpConnectClient(){
+	int32_t sockfd;
 	struct sockaddr_in servaddr;
 	socklen_t addrlen = sizeof(struct sockaddr_in);
 
@@ -97,7 +94,8 @@ uint32_t udpConnectClient(struct sockaddr_in *udpPtr){
 	servaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 	servaddr.sin_port        = htons(PORT2);
 
-	udpPtr = &servaddr;
+	if(connect(sockfd, (struct sockaddr *)&servaddr, addrlen) == FAILURE)
+                DEBUG_ERROR("connect", __func__);
 
 	return sockfd;
 }
