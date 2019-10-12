@@ -1,10 +1,6 @@
 /************* Library Inclusion ****************/
 
-#ifndef _HEADER_H_
-#define _HEADER_H_
-
-#endif
-
+#include "header.h"
 #include <mqueue.h>
 
 /************** MACRO Defination ****************/
