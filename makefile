@@ -8,12 +8,13 @@ MISRAFLAGS := --enable=all
 DIR := ./
 
 LIBS := -lpthread
+LIBS += -lrt
 
 SRC1 := server.c
 SRC2 += client.c
 
 DEP := sock.c
-#DEP += linkedList.c
+DEP += msgQ.c
 
 EXE1 := server
 EXE2 := client

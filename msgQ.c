@@ -16,7 +16,7 @@ mqd_t msgQ_open(const char *mqName, uint32_t mqSize){
 }
 
 int msgQ_send(mqd_t mqd, const char *mPtr, size_t mPtr_size){
-	return mq_close(mqd, mPtr, mPtr_size, 0);
+	return mq_send(mqd, mPtr, mPtr_size, 0);
 }
 
 ssize_t msgQ_receive(mqd_t mqd, char *mPtr, size_t mPtr_size){
